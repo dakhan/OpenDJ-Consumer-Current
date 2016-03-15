@@ -30,8 +30,8 @@ public class DistrictStudentList implements Serializable {
 			return studentList;
 		}
 
-		public void setStudentList(List<DistrictStudentInfo> staffList) {
-			this.studentList = staffList;
+		public void setStudentList(List<DistrictStudentInfo> studentList) {
+			this.studentList = studentList;
 		}
 	}
 }
