@@ -1,6 +1,7 @@
 package org.boces.djclient.service;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.boces.api.client.DistrictLeaInfo;
@@ -11,8 +12,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
+import org.springframework.context.annotation.Bean;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class LeaService {
@@ -30,10 +38,19 @@ public class LeaService {
 		log.info("Lea list URL: " + leaUrl);
 		return leaUrl;
 	}
-	
+	private List<HttpMessageConverter<?>> getMessageConverters() {
+	    List<HttpMessageConverter<?>> converters = new ArrayList<HttpMessageConverter<?>>();
+	    MappingJackson2HttpMessageConverter custom_converter = new MappingJackson2HttpMessageConverter();
+	    ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+		custom_converter.setObjectMapper(objectMapper);
+	    converters.add(custom_converter);
+	    return converters;
+	}
 	//Calls API using the URL from getLeaListUrl and returns the list of Leas in a given endpoint
 	public DistrictLeasList retrieveLeaList(OAuthEndpointInfo endpoint){
 		RestTemplate rt = new RestTemplate();
+		rt.setMessageConverters(getMessageConverters());
 		DistrictLeasList leaList = rt.getForObject(getLeaListUrl(endpoint), DistrictLeasList.class);
 		return leaList;
 	}

@@ -17,6 +17,18 @@ public class DistrictStaffInfo implements Serializable {
 	private String districtId;
 	
 	//Json Attributes from REStful
+	
+	//CODE: For future use with usernames/passwords from API
+	/*
+	 * 
+	 * @JsonProperty("@UserName")
+	 * Private String userName;
+	 * 
+	 * @JsonProperty("@password")
+	 * Private String password;
+	 * 
+	 */
+	
 	@JsonProperty("@refId")
 	private String refId;
 	
@@ -34,11 +46,22 @@ public class DistrictStaffInfo implements Serializable {
 	
 	@JsonProperty("primaryAssignment")
 	private PrimaryAssignment primaryAssignment;
+	
 	/*
 	public String getAccessCode() {
 		return UUID.fromString(refId).toString();
 	}
 	*/
+	
+	//CODE: For future use with usernames/passwords from API
+	/*
+	 * public String getUsername(){
+	 * 	return userName
+	 * public String getPassword(){
+	 * 	return password
+	 * 
+	 */
+	
 	public String getDistrictId() {
 		return districtId;
 	}

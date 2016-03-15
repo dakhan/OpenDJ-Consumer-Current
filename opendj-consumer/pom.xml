@@ -5,7 +5,7 @@
 
 	<groupId>org.boces.iam</groupId>
 	<artifactId>opendj-consumer</artifactId>
-	<version>0.5-SNAPSHOT</version>
+	<version>0.5.1</version>
 	<packaging>jar</packaging>
 
 	<name>ldap-utility</name>

@@ -165,13 +165,24 @@ public class LdapUtil {
 					+ ",ou=" 
 					+ staff.getDistrictName() 
 					+ ",ou=Users,dc=districts,dc=onefederation,dc=org";
+			/*
+			 * log.info("Username: " + staff.getUsername());
+			 * String entryDn = "uid="
+			 * 		+ staff.getUsername()
+			 * 		+ ",ou="
+			 * 		+ staff.getDistrictName()
+			 * 		+ ",ou=Users,dc=districts,dc=onefederation,dc=org";
+			 */
+			
+			//addAttribute("userPassword", staff.getPassword().
+			
 			//initial attributes defined are 'required' attributes. Below are conditionals to handle attributes that may be returning null values from the API
 			Entry entry = new LinkedHashMapEntry(entryDn).
 					addAttribute("objectclass", "top").
 					addAttribute("objectClass", "fedUser").
 					addAttribute("fedRefID", staff.getRefId()).
 					addAttribute("fedUserType", "T").
-					addAttribute("userPassword", UserCredentialsUtil.generateAlgorithmicPassword(staff.getGivenName(), staff.getFamilyName())).
+					addAttribute("userPassword", UserCredentialsUtil.generateAlgorithmicPassword(staff.getGivenName(), staff.getFamilyName())).		
 					addAttribute("fedGUID", UUID.randomUUID().toString());
 			if(staff.getLocalId() != ""){
 				entry.addAttribute("fedLocalID", staff.getLocalId());
@@ -211,6 +222,18 @@ public class LdapUtil {
 					+ ",ou=" 
 					+ student.getDistrictName() 
 					+ ",ou=Users,dc=districts,dc=onefederation,dc=org";
+			
+			/* 
+			 * log.info("Username: " + student.getUsername());
+			 * String entryDn = "uid="
+			 * 		+ student.getUsername()
+			 * 		+ ",ou="
+			 * 		+ student.getDistrictName()
+			 * 		+ ",ou=Users,dc=districts,dc=onefederation,dc=org";
+			 */
+			
+			//addAttribute("userPassword", student.getPassword()).
+			
 			//initial attributes defined are 'required' attributes. Below are conditionals to handle attributes that may be returning null values from the API
 			Entry entry = new LinkedHashMapEntry(entryDn).
 					addAttribute("objectclass", "top").
