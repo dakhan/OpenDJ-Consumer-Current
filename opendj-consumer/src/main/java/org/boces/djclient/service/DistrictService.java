@@ -37,6 +37,12 @@ public class DistrictService {
 	
 	@Value("${district.alias.url}")
 	String districtAliasUrl;
+	
+	@Value("${staff.pagingSize}")
+	Integer staffPagingSize;
+	
+	@Value("${student.pagingSize}")
+	Integer studentPagingSize;
 
 	//Builds a DistrictInfo Object using a specified endpoint and LeaRefId
 	public DistrictInfo getDistrictInfo(OAuthEndpointInfo endpoint, DistrictLeasList leaList) {
@@ -46,10 +52,10 @@ public class DistrictService {
 		districtInfo.setDistrictLeasList(leaList);
 		
 		//Set Student List
-		districtInfo.setStudentList(studentService.retrieveStudentList(endpoint, leaList, 1000));
+		districtInfo.setStudentList(studentService.retrieveStudentList(endpoint, leaList, studentPagingSize));
 
 		//Set Staff List
-		districtInfo.setStaffList(staffService.retrieveStaffList(endpoint, leaList, 1000));
+		districtInfo.setStaffList(staffService.retrieveStaffList(endpoint, leaList, staffPagingSize));
 		
 		return districtInfo;
 	}

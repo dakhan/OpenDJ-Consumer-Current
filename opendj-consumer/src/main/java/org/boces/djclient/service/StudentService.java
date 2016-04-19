@@ -39,23 +39,21 @@ public class StudentService {
 	@Value("${student.url}")
 	String studentDataUrl;
 	
-	//Creates a student list API URL based on a given leaRefId
+	//Creates a student list API URL eg... "https://sandbox.ricone.org/api/requests/xStudents?"
 	private String getStudentDataUrl(OAuthEndpointInfo endpoint) {
 		String studentUrl = endpoint.getHref() + studentDataUrl;
 		log.info("Student URL " + studentUrl);
 		return studentUrl;
 	}
 	
-	/*
-	 * Calls API and returns a DistrictStudent List based on a leaRefId
-	 * Also cycles through student objects and assigns leaRefId as districtId
-	 * TODO: check necessity of assigning districtId
-	*/
-	
+	//capture invidual page of student data from API
 	public DistrictStudentList retrieveStudentListPage(OAuthEndpointInfo endpoint, Integer navigationPage, Integer navigationPageSize ) {
-		String paging = "&navigationPage={navigationPage}&navigationPageSize{navigationPageSize}";
+		
+		String paging = "navigationPage={navigationPage}&navigationPageSize{navigationPageSize}";
 		RestTemplate rt = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
+		
+		//use headers to send authorization token
 		try{
 			headers.set("Authorization", "Bearer" + endpoint.getToken());
 			HttpEntity<?> entity = new HttpEntity<DistrictStudentList>(headers);
@@ -66,19 +64,28 @@ public class StudentService {
 			return null;
 		}
 	}
+	
+	//capture a full list of student data from API
 	public DistrictStudentList retrieveStudentList(OAuthEndpointInfo endpoint, DistrictLeasList leaList, Integer navigationPageSize ) {
+		
 		DistrictStudentList studentList = new DistrictStudentList();
 		Integer x = 1;
+		
+		//Get individual pages of the student list from the API and reassemble those pages into a single student list
 		while(x != 0){
 			DistrictStudentList studentListPage = retrieveStudentListPage(endpoint, x, navigationPageSize);
 			if((studentListPage != null) && (studentListPage.getDistrictStudentInfoList() != null) && !(studentListPage.getDistrictStudentInfoList().isEmpty())){
 				if(studentList.getxStudents() == null){
 					studentList = studentListPage;
-				}else{
+				}
+				else
+				{
 					studentList.merge(studentListPage);
 				}
 				x++;
-			}else{
+			}
+			else
+			{
 				x=0;
 			}
 		}

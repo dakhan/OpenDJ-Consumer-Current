@@ -35,6 +35,7 @@ public class DistrictStudentList implements Serializable {
 		}
 	}
 	
+	//merge two seperate student lists
 	public void merge(DistrictStudentList list) {
 		this.getDistrictStudentInfoList().addAll(list.getDistrictStudentInfoList());
 	}

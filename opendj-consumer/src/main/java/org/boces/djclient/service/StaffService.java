@@ -39,20 +39,16 @@ public class StaffService {
 	@Value("${staff.url}")
 	String staffDataUrl;
 	
-	//Creates a staff list API URL based on a given leaRefId
+	//Creates a staff list API URL eg... "https://sandbox.ricone.org/api/requests/xStaff?"
 	private String getStaffDataUrl(OAuthEndpointInfo endpoint) {
-		String url = endpoint.getHref() + staffDataUrl + ".json?accessToken=" + endpoint.getToken();
+		String url = endpoint.getHref() + staffDataUrl;
 		log.info("District Staff URL: " + url);
 		return url;
 	}
 	
-	/*
-	 * Calls API and returns a DistrictStaff List based on a leaRefId
-	 * Also cycles through staff objects and assigns leaRefId as districtId
-	 * TODO: check necessity of assigning districtId
-	*/
+	//capture invidual page of staff data from API
 	public DistrictStaffList retrieveStaffListPage(OAuthEndpointInfo endpoint, Integer navigationPage, Integer navigationPageSize ) {
-		String paging = "&navigationPage={navigationPage}&navigationPageSize{navigationPageSize}";
+		String paging = "navigationPage={navigationPage}&navigationPageSize{navigationPageSize}";
 		RestTemplate rt = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
 		try{
@@ -65,6 +61,8 @@ public class StaffService {
 			return null;
 		}
 	}
+	
+	//capture a full list of staff data from API
 	public DistrictStaffList retrieveStaffList(OAuthEndpointInfo endpoint, DistrictLeasList leaList, Integer navigationPageSize) {
 		DistrictStaffList staffList = new DistrictStaffList();
 		Integer x = 1;
