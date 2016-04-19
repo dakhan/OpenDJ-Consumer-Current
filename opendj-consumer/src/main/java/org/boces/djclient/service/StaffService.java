@@ -17,6 +17,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -47,9 +51,36 @@ public class StaffService {
 	 * Also cycles through staff objects and assigns leaRefId as districtId
 	 * TODO: check necessity of assigning districtId
 	*/
-	public DistrictStaffList retrieveStaffList(OAuthEndpointInfo endpoint, DistrictLeasList leaList) {
+	public DistrictStaffList retrieveStaffListPage(OAuthEndpointInfo endpoint, Integer navigationPage, Integer navigationPageSize ) {
+		String paging = "&navigationPage={navigationPage}&navigationPageSize{navigationPageSize}";
 		RestTemplate rt = new RestTemplate();
-		DistrictStaffList staffList = rt.getForObject(getStaffDataUrl(endpoint), DistrictStaffList.class);
+		HttpHeaders headers = new HttpHeaders();
+		try{
+			headers.set("Authorization", "Bearer" + endpoint.getToken());
+			HttpEntity<?> entity = new HttpEntity<DistrictStaffList>(headers);
+			ResponseEntity<DistrictStaffList> response = rt.exchange(getStaffDataUrl(endpoint) + paging, HttpMethod.GET, entity, DistrictStaffList.class, navigationPage, navigationPageSize);
+			return response.getBody();
+		}
+		catch(Exception e){
+			return null;
+		}
+	}
+	public DistrictStaffList retrieveStaffList(OAuthEndpointInfo endpoint, DistrictLeasList leaList, Integer navigationPageSize) {
+		DistrictStaffList staffList = new DistrictStaffList();
+		Integer x = 1;
+		while(x != 0){
+			DistrictStaffList staffListPage = retrieveStaffListPage(endpoint, x, navigationPageSize);
+			if((staffListPage != null) && (staffListPage.getDistrictStaffInfoList() != null) && !(staffListPage.getDistrictStaffInfoList().isEmpty())){
+				if(staffListPage.getxStaffs() == null){
+					staffList = staffListPage;
+				}else{
+					staffList.merge(staffListPage);
+				}
+				x++;
+			}else{
+				x=0;
+			}
+		}
 		if ((staffList != null) && (staffList.getDistrictStaffInfoList() != null) && !(staffList.getDistrictStaffInfoList().isEmpty())) {
 			log.info("District Staff List Size = " + (staffList.getDistrictStaffInfoList().size()));
 			List<DistrictStaffInfo> staffInfo = staffList.getDistrictStaffInfoList();

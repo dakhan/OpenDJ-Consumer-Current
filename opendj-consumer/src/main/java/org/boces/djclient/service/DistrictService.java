@@ -46,10 +46,10 @@ public class DistrictService {
 		districtInfo.setDistrictLeasList(leaList);
 		
 		//Set Student List
-		districtInfo.setStudentList(studentService.retrieveStudentList(endpoint, leaList));
+		districtInfo.setStudentList(studentService.retrieveStudentList(endpoint, leaList, 1000));
 
 		//Set Staff List
-		districtInfo.setStaffList(staffService.retrieveStaffList(endpoint, leaList));
+		districtInfo.setStaffList(staffService.retrieveStaffList(endpoint, leaList, 1000));
 		
 		return districtInfo;
 	}

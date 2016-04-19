@@ -12,7 +12,7 @@ public class DistrictStudentList implements Serializable {
 	@JsonProperty("xStudents")
 	private XStudents xStudents;
 
-	XStudents getxStudents() {
+	public XStudents getxStudents() {
 		return xStudents;
 	}
 	
@@ -33,5 +33,9 @@ public class DistrictStudentList implements Serializable {
 		public void setStudentList(List<DistrictStudentInfo> studentList) {
 			this.studentList = studentList;
 		}
+	}
+	
+	public void merge(DistrictStudentList list) {
+		this.getDistrictStudentInfoList().addAll(list.getDistrictStudentInfoList());
 	}
 }

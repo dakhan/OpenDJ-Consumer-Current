@@ -17,6 +17,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -37,7 +41,7 @@ public class StudentService {
 	
 	//Creates a student list API URL based on a given leaRefId
 	private String getStudentDataUrl(OAuthEndpointInfo endpoint) {
-		String studentUrl = endpoint.getHref() + studentDataUrl + ".json?accessToken=" + endpoint.getToken();
+		String studentUrl = endpoint.getHref() + studentDataUrl;
 		log.info("Student URL " + studentUrl);
 		return studentUrl;
 	}
@@ -47,11 +51,37 @@ public class StudentService {
 	 * Also cycles through student objects and assigns leaRefId as districtId
 	 * TODO: check necessity of assigning districtId
 	*/
-	public DistrictStudentList retrieveStudentList(OAuthEndpointInfo endpoint, DistrictLeasList leaList ) {
+	
+	public DistrictStudentList retrieveStudentListPage(OAuthEndpointInfo endpoint, Integer navigationPage, Integer navigationPageSize ) {
+		String paging = "&navigationPage={navigationPage}&navigationPageSize{navigationPageSize}";
 		RestTemplate rt = new RestTemplate();
-		
-		DistrictStudentList studentList = rt.getForObject(getStudentDataUrl(endpoint), DistrictStudentList.class);
-
+		HttpHeaders headers = new HttpHeaders();
+		try{
+			headers.set("Authorization", "Bearer" + endpoint.getToken());
+			HttpEntity<?> entity = new HttpEntity<DistrictStudentList>(headers);
+			ResponseEntity<DistrictStudentList> response = rt.exchange(getStudentDataUrl(endpoint) + paging, HttpMethod.GET, entity, DistrictStudentList.class, navigationPage, navigationPageSize);
+			return response.getBody();
+		}
+		catch(Exception e){
+			return null;
+		}
+	}
+	public DistrictStudentList retrieveStudentList(OAuthEndpointInfo endpoint, DistrictLeasList leaList, Integer navigationPageSize ) {
+		DistrictStudentList studentList = new DistrictStudentList();
+		Integer x = 1;
+		while(x != 0){
+			DistrictStudentList studentListPage = retrieveStudentListPage(endpoint, x, navigationPageSize);
+			if((studentListPage != null) && (studentListPage.getDistrictStudentInfoList() != null) && !(studentListPage.getDistrictStudentInfoList().isEmpty())){
+				if(studentList.getxStudents() == null){
+					studentList = studentListPage;
+				}else{
+					studentList.merge(studentListPage);
+				}
+				x++;
+			}else{
+				x=0;
+			}
+		}
 		if ((studentList != null) && (studentList.getDistrictStudentInfoList() != null) && !(studentList.getDistrictStudentInfoList().isEmpty())) {
 			log.info("District Student List Size = " + (studentList.getDistrictStudentInfoList().size()));
 			List<DistrictStudentInfo> studentInfo = studentList.getDistrictStudentInfoList();
