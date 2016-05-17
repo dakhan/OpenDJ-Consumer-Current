@@ -35,7 +35,7 @@ public class DistrictStaffList implements Serializable {
 		}
 	}
 	
-	//merge two seperate staff lists
+	//merge two seperate staff lists (used when paging API requests)
 	public void merge(DistrictStaffList list) {
 		this.getDistrictStaffInfoList().addAll(list.getDistrictStaffInfoList());
 	}

@@ -62,5 +62,4 @@ public class OAuthClient implements Serializable {
 	  jsonConverter.setObjectMapper(objectMapper);
 	  return jsonConverter;
 	 }
-
 }
